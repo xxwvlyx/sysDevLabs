@@ -1,0 +1,10 @@
+Source: etc-snapshot
+Section: utils
+Priority: optional
+Maintainer: Vladyslav <alwaysxjun@gmail.com>
+Standards-Version: 4.5.0
+
+Package: etc-snapshot
+Architecture: all
+Description: Snapshot of /etc files
+ This package contains files copied from /etc excluding directories and symlinks.

@@ -1,0 +1,45 @@
+name: Build DEB and RPM packages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential \
+            debhelper \
+            dpkg-dev \
+            rpm
+
+      - name: Build DEB
+        run: |
+          dpkg-buildpackage -us -uc
+
+      - name: Build RPM
+        run: |
+          rpmbuild -bb rpm/etc-snapshot.spec \
+            --define "_topdir $(pwd)/rpm"
+
+      - name: Upload DEB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-package
+          path: ../*.deb
+
+      - name: Upload RPM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpm-package
+          path: rpm/RPMS/**/*.rpm

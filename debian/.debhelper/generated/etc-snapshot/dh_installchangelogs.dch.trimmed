@@ -1,0 +1,5 @@
+etc-snapshot (1.0-1) unstable; urgency=medium
+
+  * Initial package from copyfileEtc
+
+ -- Vladyslav <alwaysxjun@gmail.com>  Tue, 23 Dec 2025 16:00:00 +0200

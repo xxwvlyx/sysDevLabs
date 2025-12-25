@@ -1,0 +1,9 @@
+Package: etc-snapshot
+Version: 1.0-1
+Architecture: all
+Maintainer: Vladyslav <alwaysxjun@gmail.com>
+Installed-Size: 7
+Section: utils
+Priority: optional
+Description: Snapshot of /etc files
+ This package contains files copied from /etc excluding directories and symlinks.
