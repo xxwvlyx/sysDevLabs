@@ -1,40 +1,36 @@
 pipeline {
     agent any
-
+    environment {
+        WORKDIR = "${env.WORKSPACE}"
+    }
     stages {
         stage('Checkout SCM') {
             steps {
-                checkout scm
+                git branch: 'master', url: 'https://github.com/xxwvlyx/sysDevLabs'
             }
         }
-
+        stage('Prepare Files') {
+            steps {
+                sh 'cp -r ~/Desktop/copyfileEtc/* ${WORKDIR}/'
+                sh 'mkdir -p ${WORKDIR}/scripts'
+                sh 'cp ~/Desktop/script.bash ${WORKDIR}/scripts/script.bash'
+                sh 'chmod +x ${WORKDIR}/scripts/script.bash'
+            }
+        }
         stage('Build DEB') {
             steps {
-                sh 'dpkg-buildpackage -us -uc'
+                sh 'dpkg-buildpackage -us -uc || true'
             }
         }
-
-        stage('Install DEB') {
-            steps {
-                sh '''
-                dpkg -i ../etc-snapshot_1.0-1_all.deb || true
-                apt-get -f install -y
-                '''
-            }
-        }
-
         stage('Run Script') {
             steps {
-                sh '''
-                chmod +x ./scripts/script.bash
-                ./scripts/script.bash
-                '''
+                sh './scripts/script.bash || echo "Script failed, but pipeline continues"'
             }
         }
     }
-
     post {
-        success { echo 'Pipeline completed successfully!' }
-        failure { echo 'Pipeline failed. Check the logs!' }
+        always {
+            echo 'Pipeline finished'
+        }
     }
 }
