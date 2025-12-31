@@ -2,13 +2,9 @@ pipeline {
     agent any
 
     stages {
-
         stage('Checkout SCM') {
             steps {
-                checkout([$class: 'GitSCM',
-                    branches: [[name: '*/master']],
-                    userRemoteConfigs: [[url: 'https://github.com/xxwvlyx/sysDevLabs']]
-                ])
+                checkout scm
             }
         }
 
@@ -20,11 +16,20 @@ pipeline {
             }
         }
 
+        stage('Install DEB') {
+            steps {
+                sh '''
+                sudo dpkg -i ../etc-snapshot_1.0-1_all.deb || true
+                sudo apt-get -f install -y
+                '''
+            }
+        }
+
         stage('Run Script') {
             steps {
                 sh '''
-                chmod +x ./scripts/script.bash
-                ./scripts/script.bash
+                sudo chmod +x ./scripts/script.bash
+                sudo ./scripts/script.bash
                 '''
             }
         }
@@ -35,8 +40,7 @@ pipeline {
             echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed. Check the logs.'
+            echo 'Pipeline failed. Check the logs!'
         }
     }
 }
-
