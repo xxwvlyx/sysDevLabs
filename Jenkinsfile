@@ -18,10 +18,12 @@ pipeline {
 
         stage('Install DEB') {
             steps {
-                sh '''
-                  sudo dpkg -i ../*.deb || sudo apt -f install -y
-                '''
-            }
+        sh '''
+        dpkg -i ../etc-snapshot_1.0-1_all.deb || true
+        apt-get update
+        apt-get -f install -y
+        '''
+    		}
         }
 
         stage('Run script') {
