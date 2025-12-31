@@ -23,9 +23,8 @@ pipeline {
         stage('Run Script') {
             steps {
                 sh '''
-                # Переконайся, що скрипт має права на виконання
-                chmod +x ./copyfileEtc/file-counter
-                ./copyfileEtc/file-counter
+                chmod +x ./scripts/script.bash
+                ./scripts/script.bash
                 '''
             }
         }
