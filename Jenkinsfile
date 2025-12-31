@@ -2,36 +2,42 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout SCM') {
             steps {
-                checkout scm
+                checkout([$class: 'GitSCM',
+                    branches: [[name: '*/master']],
+                    userRemoteConfigs: [[url: 'https://github.com/xxwvlyx/sysDevLabs']]
+                ])
             }
         }
 
         stage('Build DEB') {
             steps {
                 sh '''
-                  dpkg-buildpackage -us -uc
+                dpkg-buildpackage -us -uc
                 '''
             }
         }
 
-        stage('Install DEB') {
-            steps {
-        sh '''
-        dpkg -i ../etc-snapshot_1.0-1_all.deb || true
-        apt-get update
-        apt-get -f install -y
-        '''
-    		}
-        }
-
-        stage('Run script') {
+        stage('Run Script') {
             steps {
                 sh '''
-                  script
+                # Переконайся, що скрипт має права на виконання
+                chmod +x ./copyfileEtc/file-counter
+                ./copyfileEtc/file-counter
                 '''
             }
         }
     }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check the logs.'
+        }
+    }
 }
+
